@@ -14,14 +14,13 @@ export default {
   },
   methods: {
     toaster: function() {
-      var myInit = { 
+      var myInit = {
           method: 'GET',
           headers: new Headers(),
-          mode: 'cors',
+          mode: 'no-cors',
           cache: 'default'
         };
-      fetch("http://127.0.0.1:8000/can_connect", myInit)
-        .then(r => r.json())
+      fetch("http://127.0.0.1:8000/can_connect/", myInit)
         .then(() => {
           M.toast({
             html: "Connected to API",
