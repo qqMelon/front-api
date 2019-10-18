@@ -1,80 +1,66 @@
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-
-# from WarUnicorn.serializers import UserSerializer, GroupSerializer
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-
-
-# class GroupViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows groups to be viewed or edited.
-#     """
-#     queryset = Group.objects.all()
-#     serializer_class = GroupSerializer
-
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 from WarUnicorn.models import Unicorn
 from WarUnicorn.serializers import UnicornSerializer
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.http import Http404
+from rest_framework.views import APIView
 
 
-@csrf_exempt
-def unicorn_list(request):
+class UnicornList(APIView):
     """
     List all unicorns, or create a new one
     """
-    if request.method == 'GET':
+
+    def get(self, request, format=None):
         unicorns = Unicorn.objects.all()
         serializer = UnicornSerializer(unicorns, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = UnicornSerializer(data=data)
+    def post(self, request, format=None):
+        serializer = UnicornSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def unicorn_detail(request, pk):
+class UnicornDetail(APIView):
     """
     Retrieve, update or delete an unicorn
     """
-    try:
-        unicorn = Unicorn.objects.get(pk=pk)
-    except Unicorn.DoesNotExist:
-        return HttpResponse(status=404)
 
-    if request.method == 'GET':
+    def get_object(self, pk):
+        try:
+            return Unicorn.objects.get(pk=pk)
+        except Unicorn.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, pk, format=None):
+        unicorn = self.get_object(pk)
         serializer = UnicornSerializer(unicorn)
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
 
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = UnicornSerializer(unicorn, data=data)
+    def put(self, request, pk, format=None):
+        unicorn = self.get_object(pk)
+        serializer = UnicornSerializer(unicorn, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        unicorn = self.get_object(pk)
         unicorn.delete()
-        return HttpResponse(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@csrf_exempt
-def can_connect(request):
+class CanConnect(APIView):
     """
     Check is front can join back
     """
-    return HttpResponse(status=200)
+
+    def get(self, request, format=None):
+        return HttpResponse(status=status.HTTP_200_OK)
