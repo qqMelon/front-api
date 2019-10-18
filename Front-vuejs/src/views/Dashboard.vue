@@ -6,10 +6,35 @@
       ><i class="material-icons">home</i></a
     >
     <div class="dashboard-container row">
-      <!-- <div class="left-container col s6"></div>
-      <div class="right-container col s6"></div> -->
-      {{ unicorns }}
-      <button @click="callData">Bonjour</button>
+      <div class="left-container col s6">
+        <h2 class="title">Request :</h2>
+      </div>
+      <div class="right-container col s6">
+        <h2 class="title">Values :</h2>
+        <div class="container-list">
+          <ul class="collection">
+            <li
+              class="collection-item avatar"
+              v-for="unicorn in unicorns"
+              :key="unicorn.id"
+            >
+              <img
+                v-if="unicorn.img_url"
+                :src="unicorn.img_url"
+                alt=""
+                class="circle"
+              />
+              <span class="title">{{ unicorn.name }}</span>
+              <p>
+                {{ unicorn.model }} <br />
+                <strong class="muted">{{ unicorn.price }}</strong> <br />
+                Available : {{ unicorn.available }}
+              </p>
+              <!-- <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a> -->
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,9 +48,9 @@ export default {
       feedBack: ""
     };
   },
-  // mounted: function() {
-  //   this.callData();
-  // },
+  created: function() {
+    this.callData();
+  },
   methods: {
     goHome: function() {
       this.$router.push({ name: "home" });
@@ -42,9 +67,11 @@ export default {
       fetch("http://127.0.0.1:8000/unicorns/", myInit)
         .then(response => response.json())
         .then(data => {
+          this.unicorns = data;
           console.log(data);
         })
         .catch(error => {
+          this.feedBack = error;
           console.log(error);
         });
     }
@@ -71,6 +98,19 @@ export default {
     width: 80%;
     height: 80%;
     background-color: aliceblue;
+
+    .container-list {
+      max-height: 450px;
+      overflow: auto;
+
+      ul.collection {
+        padding: 5px;
+
+        li.collection-item {
+          margin: 10px 0;
+        }
+      }
+    }
   }
 }
 </style>
