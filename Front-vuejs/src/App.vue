@@ -21,7 +21,6 @@ export default {
           cache: 'default'
         };
       fetch("http://127.0.0.1:8000/can_connect/", myInit)
-      .then(r => r.json())
         .then(() => {
           M.toast({
             html: "Connected to API",
