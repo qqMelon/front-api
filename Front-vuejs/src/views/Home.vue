@@ -1,19 +1,23 @@
 <template>
   <div class="home">
-    <a class="btn-floating btn-large waves-effect waves-light tile pulse" @click="goDashboard"><i class="material-icons">dashboard</i></a>
+    <a
+      class="btn-floating btn-large waves-effect waves-light tile pulse"
+      @click="goDashboard"
+      ><i class="material-icons">dashboard</i></a
+    >
     <div class="loger-container">
       <div class="head-loger-content">
         <div
           class="btn-custom btn-to-login"
           :class="{ active: inLogin }"
-          @click="toLogin"
+          @click="inLogin = true"
         >
           Login
         </div>
         <div
           class="btn-custom btn-to-register"
-          :class="{ active: inRegister }"
-          @click="toRegister"
+          :class="{ active: !inLogin }"
+          @click="inLogin = !inLogin"
         >
           Register
         </div>
@@ -40,8 +44,7 @@ export default {
   },
   data: function() {
     return {
-      inLogin: true,
-      inRegister: false
+      inLogin: true
     };
   },
   methods: {
@@ -50,19 +53,10 @@ export default {
         return;
       } else {
         this.inLogin = true;
-        this.inRegister = false;
-      }
-    },
-    toRegister: function() {
-      if (this.inRegister) {
-        return;
-      } else {
-        this.inLogin = false;
-        this.inRegister = true;
       }
     },
     goDashboard: function() {
-      this.$router.push({ name: "dashboard" })
+      this.$router.push({ name: "dashboard" });
     },
     sendData: function(data) {
       console.log(data); // eslint-disable-line no-console

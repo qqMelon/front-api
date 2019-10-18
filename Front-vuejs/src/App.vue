@@ -15,11 +15,11 @@ export default {
   methods: {
     toaster: function() {
       var myInit = {
-          method: 'GET',
-          headers: new Headers(),
-          mode: 'no-cors',
-          cache: 'default'
-        };
+        method: "GET",
+        headers: new Headers(),
+        mode: "no-cors",
+        cache: "default"
+      };
       fetch("http://127.0.0.1:8000/can_connect/", myInit)
         .then(() => {
           M.toast({
