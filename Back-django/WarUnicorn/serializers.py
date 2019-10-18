@@ -5,7 +5,7 @@ from WarUnicorn.models import Unicorn
 class UnicornSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unicorn
-        fields = ["id", "name", "model", "price", "available"]
+        fields = ["id", "name", "model", "price", "available", "img_url"]
 
     def create(self, validated_data):
         return Unicorn.objects.create(**validated_data)
