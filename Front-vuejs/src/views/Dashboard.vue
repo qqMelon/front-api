@@ -9,6 +9,7 @@
       <!-- <div class="left-container col s6"></div>
       <div class="right-container col s6"></div> -->
       {{ unicorns }}
+      <button @click="callData">Bonjour</button>
     </div>
   </div>
 </template>
@@ -22,9 +23,9 @@ export default {
       feedBack: ""
     };
   },
-  mounted: function() {
-    this.callData();
-  },
+  // mounted: function() {
+  //   this.callData();
+  // },
   methods: {
     goHome: function() {
       this.$router.push({ name: "home" });
@@ -32,11 +33,20 @@ export default {
     callData: function() {
       const myInit = {
         method: "GET",
-        headers: new Headers(),
-        mode: "no-cors",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json"
+        },
         cache: "default"
       };
-      console.log(fetch("http://127.0.0.1:8000/unicorns/", myInit).then(Response => this.unicorns = Response))
+      fetch("http://127.0.0.1:8000/unicorns/", myInit)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };
