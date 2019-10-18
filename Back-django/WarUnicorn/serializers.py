@@ -15,6 +15,7 @@ class UnicornSerializer(serializers.ModelSerializer):
         instance.color = validated_data.get("color", instance.color)
         instance.model = validated_data.get("model", instance.model)
         instance.price = validated_data.get("price", instance.price)
+        instance.img_url = validated_data.get("img_url", instance.img_url)
         instance.available = validated_data.get("available", instance.available)
         instance.save()
         return instance
