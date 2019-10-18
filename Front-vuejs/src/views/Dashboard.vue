@@ -64,7 +64,7 @@ export default {
         },
         cache: "default"
       };
-      fetch("http://127.0.0.1:8000/unicorns/1", myInit)
+      fetch("http://127.0.0.1:8000/unicorns/", myInit)
         .then(response => response.json())
         .then(data => {
           this.unicorns = data;
