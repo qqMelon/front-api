@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('WarUnicorn', '0002_auto_20191017_1022'),
-    ]
+    dependencies = [("WarUnicorn", "0002_auto_20191017_1022")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='unicorn',
-            name='language',
-        ),
-        migrations.RemoveField(
-            model_name='unicorn',
-            name='style',
-        ),
+        migrations.RemoveField(model_name="unicorn", name="language"),
+        migrations.RemoveField(model_name="unicorn", name="style"),
     ]
