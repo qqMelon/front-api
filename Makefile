@@ -3,3 +3,7 @@ front-serv:
 
 back-serv:
 	cd ./Back-django/; ./manage.py runserver
+
+install:
+	pip install -r ./Back-django/requirements.txt
+	npm install ./Front-vuejs
