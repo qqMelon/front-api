@@ -28,7 +28,7 @@ ___
 
 Point d'api servant à la connection d'un user
 
-* url : http://127.0.0.1:8000/login/
+* url : http://127.0.0.1:8000/api/login/
 * method : post
 * formdata : { "username": "...", "password": "..." }
 
@@ -56,7 +56,7 @@ ___
 Point d'api servant à récupérer les token jwt d'authentification
 
 * url: http://127.0.0.1:8000/api/token/
-* method : get
+* method : post
 * formdata : { "username": "...", "password": "..." }
 
 Retour possible :

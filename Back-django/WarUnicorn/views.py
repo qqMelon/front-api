@@ -1,40 +1,56 @@
 from django.http import HttpResponse
-from WarUnicorn.models import Unicorn
-from WarUnicorn.serializers import UnicornSerializer
+from WarUnicorn.models import Unicorn, User
+from WarUnicorn.serializers import UnicornSerializer, UserSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import viewsets
+from .permissions import IsLoggedInUserOrAdmin, IsAdminUser
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by("id")
+    serializer_class = UserSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == 'create':
+            permission_classes = [AllowAny]
+        elif self.action == 'retrieve' or self.action == 'update' or self.action == 'partial_update':
+            permission_classes = [IsLoggedInUserOrAdmin]
+        elif self.action == 'list' or self.action == 'destroy':
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
 
 
 class LoginView(APIView):
     """
     get logged
     """
+    permission_classes = (AllowAny,)
 
     def post(self, request):
-        username = request.data.get("username")
+        email = request.data.get("email")
         password = request.data.get("password")
-        if username is None or password is None:
+        if email is None or password is None:
             return Response(
-                {'error': 'Please provide both username and password'},
-                status=status.HTTP_400_BAD_REQUEST)
-        user = authenticate(username=username, password=password)
+                {"error": "Please provide both email and password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user = authenticate(email=email, password=password)
         if not user:
             return Response(
-                {'error': 'Invalid Credentials'},
-                status=status.HTTP_404_NOT_FOUND)
+                {"error": "Invalid Credentials"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = TokenObtainPairSerializer(data=request.data)
         if serializer.is_valid():
-            response = Response(
-                data={"login": True},
-                status=status.HTTP_200_OK
-            )
-            response.set_cookie('JWT-access', serializer.validated_data['access'])
-            response.set_cookie('JWT-refresh', serializer.validated_data['refresh'])
+            response = Response(data={"login": True}, status=status.HTTP_200_OK)
+            response.set_cookie("JWT-access", serializer.validated_data["access"])
+            response.set_cookie("JWT-refresh", serializer.validated_data["refresh"])
         return response
 
 
@@ -42,6 +58,8 @@ class UnicornList(APIView):
     """
     List all unicorns, or create a new one
     """
+
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
         unicorns = Unicorn.objects.all()
@@ -60,8 +78,6 @@ class UnicornDetail(APIView):
     """
     Retrieve, update or delete an unicorn
     """
-
-    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         try:
